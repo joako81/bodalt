@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Sube las fotos de la boda de Lidia y Tomás."
+    />
+    <title>Sube tus fotos - Lidia y Tomás</title>
+    <style>
+      /* =========================================
+           VARIABLES CSS (DISEÑO Y COLORES)
+           ========================================= */
+      :root {
+        --color-texto-principal: #fff8f0; /* Crema suave */
+        --color-acento: #d4af37; /* Dorado elegante */
+        --color-boton: #d9b3a8; /* Rosa empolvado */
+        --color-boton-hover: #c59a8e;
+        --overlay-color: rgba(30, 20, 20, 0.65); /* Capa oscura cálida */
+        --fuente-titulos: "Georgia", serif;
+        --fuente-texto: "Helvetica Neue", Arial, sans-serif;
+      }
+
+      /* RESET BÁSICO */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body,
+      html {
+        height: 100%;
+        font-family: var(--fuente-texto);
+        color: var(--color-texto-principal);
+        overflow: hidden;
+      }
+
+      /* =========================================
+           FONDO Y OVERLAY
+           ========================================= */
+      #background-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        z-index: -2;
+      }
+
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--overlay-color);
+        z-index: -1;
+      }
+
+      /* =========================================
+           CONTENIDO PRINCIPAL
+           ========================================= */
+      main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      h1 {
+        font-family: var(--fuente-titulos);
+        font-size: clamp(3rem, 8vw, 6rem);
+        font-weight: normal;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+      }
+
+      .fecha {
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--color-acento);
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .mensaje {
+        max-width: 600px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 3rem;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      /* =========================================
+           BOTÓN Y COUNTDOWN
+           ========================================= */
+      button {
+        background-color: var(--color-boton);
+        color: #2c1e16;
+        border: none;
+        padding: 1rem 2.5rem;
+        font-size: 1.2rem;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      }
+
+      button:hover {
+        background-color: var(--color-boton-hover);
+        transform: translateY(-2px);
+      }
+
+      #seccion-countdown {
+        margin-top: 3.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .texto-countdown {
+        font-size: 1rem;
+        font-style: italic;
+        color: var(--color-texto-principal);
+        opacity: 0.9;
+      }
+
+      #countdown-container {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap; /* Asegura que no se rompa en móviles */
+        justify-content: center;
+      }
+
+      .time-box {
+        display: flex;
+        flex-direction: column;
+        min-width: 60px;
+      }
+
+      .time-number {
+        font-size: 2.2rem;
+        font-weight: bold;
+        font-family: var(--fuente-titulos);
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+      }
+
+      .time-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--color-acento);
+      }
+
+      /* =========================================
+           MODAL (POPUP)
+           ========================================= */
+      dialog {
+        margin: auto;
+        border: none;
+        border-radius: 12px;
+        padding: 0;
+        width: 95%;
+        max-width: 800px;
+        height: 85vh;
+        background: transparent; /* Permite que se vea el fondo original del form */
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      }
+
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(8px); /* Desenfoque elegante del fondo */
+      }
+
+      .modal-header {
+        background-color: transparent;
+        padding: 10px 15px;
+        display: flex;
+        justify-content: flex-end;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        pointer-events: none; /* Permite hacer clic a través del header si es necesario */
+      }
+
+      .btn-cerrar {
+        pointer-events: auto; /* Reactiva el clic solo para el botón */
+        background: rgba(0, 0, 0, 0.5);
+        border: 2px solid #fff;
+        color: #fff;
+        font-size: 1.2rem;
+        cursor: pointer;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        z-index: 10;
+      }
+
+      .btn-cerrar:hover {
+        background: rgba(0, 0, 0, 0.8);
+        transform: scale(1.1);
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+        border-radius: 12px;
+        background-color: transparent; /* Respeta el color de fondo del propio Google Form */
+      }
+
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="background-container"></div>
+    <div id="overlay"></div>
+
+    <main>
+      <h1 id="ui-nombres"></h1>
+      <p class="fecha" id="ui-fecha"></p>
+      <p class="mensaje" id="ui-mensaje"></p>
+
+      <button
+        id="btn-abrir-modal"
+        aria-label="Abrir formulario para subir fotos"
+      ></button>
+
+      <div id="seccion-countdown">
+        <p class="texto-countdown" id="ui-texto-countdown"></p>
+        <div id="countdown-container">
+          <div class="time-box">
+            <span class="time-number" id="cd-dias">00</span
+            ><span class="time-label">Días</span>
+          </div>
+          <div class="time-box">
+            <span class="time-number" id="cd-horas">00</span
+            ><span class="time-label">Horas</span>
+          </div>
+          <div class="time-box">
+            <span class="time-number" id="cd-minutos">00</span
+            ><span class="time-label">Min</span>
+          </div>
+          <div class="time-box">
+            <span class="time-number" id="cd-segundos">00</span
+            ><span class="time-label">Seg</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <dialog id="modal-formulario">
+      <div class="modal-header">
+        <button
+          class="btn-cerrar"
+          id="btn-cerrar-modal"
+          aria-label="Cerrar ventana"
+        >
+          ✖
+        </button>
+      </div>
+      <iframe
+        id="iframe-google"
+        src=""
+        title="Formulario de Google para subir fotos"
+      ></iframe>
+    </dialog>
+
+    <script>
+      /* =========================================================================
+           PANEL DE CONFIGURACIÓN - ¡MODIFICA ESTO A TU GUSTO!
+           ========================================================================= */
+      const CONFIG = {
+        // Textos principales
+        nombres: "Lidia & Tomás",
+        fechaTexto: "2 de mayo de 2026",
+        mensajeBienvenida:
+          "¡Ayudadnos a capturar la magia de nuestra boda! Usad este espacio para subir las fotos y vídeos que vayáis haciendo.",
+        textoBoton: "Subir Fotos",
+
+        // Textos del Contador
+        textoCountdown: "Aún tienes tiempo para subir tus mejores recuerdos:",
+
+        // URLs
+        urlImagenFondo: "/imagen/FOTO BODA.png",
+        urlGoogleScript:
+          "https://script.google.com/macros/s/AKfycbwD6WvMSIZw0d7TWAFz7x5cLL6OheBeDgSmqMERExoWUWLAENmng_CcfPSnfW4g6C1wtQ/exec",
+
+        // Configuración del Countdown (Cuenta atrás)
+        activarCountdown: true, // Cambia a 'false' para ocultar contador y su texto
+        fechaBodaISO: "2026-05-02T00:00:00", // Formato AAAA-MM-DDTHH:MM:SS
+      };
+
+      /* =========================================================================
+           LÓGICA DE LA APLICACIÓN
+           ========================================================================= */
+
+      // 1. Cargar datos en la interfaz
+      document.getElementById("ui-nombres").textContent = CONFIG.nombres;
+      document.getElementById("ui-fecha").textContent = CONFIG.fechaTexto;
+      document.getElementById("ui-mensaje").textContent =
+        CONFIG.mensajeBienvenida;
+      document.getElementById("btn-abrir-modal").textContent =
+        CONFIG.textoBoton;
+      document.getElementById("ui-texto-countdown").textContent =
+        CONFIG.textoCountdown;
+
+      // Cargar imagen de fondo de forma segura
+      if (
+        CONFIG.urlImagenFondo &&
+        !CONFIG.urlImagenFondo.includes("URL_DE_TU_IMAGEN_AQUI")
+      ) {
+        document.getElementById("background-container").style.backgroundImage =
+          `url('${CONFIG.urlImagenFondo}')`;
+      } else {
+        document.getElementById("background-container").style.backgroundColor =
+          "#2C1E16";
+      }
+
+      // Cargar URL del iframe
+      if (
+        CONFIG.urlGoogleScript &&
+        !CONFIG.urlGoogleScript.includes("URL_DE_TU_GOOGLE_SCRIPT_AQUI")
+      ) {
+        document.getElementById("iframe-google").src = CONFIG.urlGoogleScript;
+      }
+
+      // 2. Lógica del Modal (Pop-up)
+      const modal = document.getElementById("modal-formulario");
+      const btnAbrir = document.getElementById("btn-abrir-modal");
+      const btnCerrar = document.getElementById("btn-cerrar-modal");
+
+      btnAbrir.addEventListener("click", () => {
+        modal.showModal();
+      });
+
+      btnCerrar.addEventListener("click", () => {
+        modal.close();
+      });
+
+      // Cerrar modal al hacer clic en el área oscura de fondo (backdrop)
+      modal.addEventListener("click", (e) => {
+        const dialogDimensions = modal.getBoundingClientRect();
+        if (
+          e.clientX < dialogDimensions.left ||
+          e.clientX > dialogDimensions.right ||
+          e.clientY < dialogDimensions.top ||
+          e.clientY > dialogDimensions.bottom
+        ) {
+          modal.close();
+        }
+      });
+
+      // 3. Lógica del Countdown
+      if (!CONFIG.activarCountdown) {
+        document.getElementById("seccion-countdown").classList.add("hidden");
+      } else {
+        const fechaObjetivo = new Date(CONFIG.fechaBodaISO).getTime();
+
+        const actualizarCountdown = setInterval(() => {
+          const ahora = new Date().getTime();
+          const distancia = fechaObjetivo - ahora;
+
+          // Si la fecha ya pasó
+          if (distancia < 0) {
+            clearInterval(actualizarCountdown);
+            document
+              .getElementById("seccion-countdown")
+              .classList.add("hidden");
+            return;
+          }
+
+          // Cálculos de tiempo
+          const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+          const horas = Math.floor(
+            (distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+          );
+          const minutos = Math.floor(
+            (distancia % (1000 * 60 * 60)) / (1000 * 60),
+          );
+          const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+          // Actualizar el DOM añadiendo ceros a la izquierda si es necesario
+          document.getElementById("cd-dias").textContent = dias
+            .toString()
+            .padStart(2, "0");
+          document.getElementById("cd-horas").textContent = horas
+            .toString()
+            .padStart(2, "0");
+          document.getElementById("cd-minutos").textContent = minutos
+            .toString()
+            .padStart(2, "0");
+          document.getElementById("cd-segundos").textContent = segundos
+            .toString()
+            .padStart(2, "0");
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>
