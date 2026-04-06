@@ -27,10 +27,13 @@
 
       body,
       html {
-        height: 100%;
+        /* Usamos dvh (Dynamic Viewport Height) para pantalla completa real en móviles */
+        min-height: 100dvh;
+        width: 100%;
         font-family: var(--fuente-texto);
         color: var(--color-texto-principal);
-        overflow: hidden;
+        /* Quitamos overflow hidden para permitir scroll si la pantalla es enana, evitando recortes */
+        overflow-x: hidden;
       }
 
       #background-container {
@@ -54,95 +57,132 @@
         z-index: -1;
       }
 
-      /* El main ocupa toda la pantalla; los hijos se posicionan con absolute */
+      /* ── ARQUITECTURA FLEXBOX (FLUIDA Y RELATIVA) ── */
       main {
-        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centra todo el bloque verticalmente */
+        align-items: center; /* Centra horizontalmente */
         width: 100%;
-        height: 100%;
+        min-height: 100dvh;
+        padding: 2rem 1rem; /* Márgenes de seguridad laterales */
       }
 
-      /* Cada elemento se mueve con variables CSS inyectadas desde JS */
       .elemento {
-        position: absolute;
+        position: relative;
         text-align: center;
-        top: var(--el-top, auto);
-        left: var(--el-left, auto);
-        right: var(--el-right, auto);
-        bottom: var(--el-bottom, auto);
-        transform: var(--el-transform, none);
-        width: var(--el-width, auto);
-        max-width: var(--el-max-width, 90vw);
+        width: 100%;
+        max-width: 90vw;
+        /* Las variables ahora controlan el orden y el espacio, inyectadas por JS */
+        order: var(--el-orden, 0);
+        margin-bottom: var(--el-margen-abajo, 1rem);
+        transition: margin 0.3s ease;
       }
 
-      /* ── Estilos visuales (idénticos al original) ── */
+      /* ── TAMAÑOS BASE (MOBILE FIRST - AUMENTADOS) ── */
       h1 {
         font-family: var(--fuente-titulos);
-        font-size: clamp(3rem, 8vw, 6rem);
+        font-size: 3.5rem; /* Texto principal más grande */
         font-weight: normal;
-        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        line-height: 1.1;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
       }
       .fecha {
         font-size: 1.2rem;
         letter-spacing: 2px;
         text-transform: uppercase;
         color: var(--color-acento);
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+        font-weight: bold;
       }
       .mensaje {
-        font-size: 1.1rem;
+        font-size: 1.15rem; /* Mensaje más legible */
         line-height: 1.6;
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+        margin: 0 auto;
+        max-width: 600px;
       }
-      button {
+
+      /* ── BOTÓN GIGANTE ── */
+      button#btn-abrir-modal {
         background-color: var(--color-boton);
         color: #2c1e16;
         border: none;
-        padding: 1rem 2.5rem;
-        font-size: 1.2rem;
+        padding: 1.2rem 2rem; /* Más área táctil */
+        font-size: 1.4rem; /* Letra más grande */
+        width: 100%; /* Ocupa todo el ancho en móvil */
+        max-width: 350px; /* Tope máximo para que no sea excesivo en tablet */
         border-radius: 50px;
         cursor: pointer;
         transition: all 0.3s ease;
         font-weight: bold;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
       }
-      button:hover {
+      button#btn-abrir-modal:hover {
         background-color: var(--color-boton-hover);
         transform: translateY(-2px);
       }
+
+      /* ── COUNTDOWN ── */
       #seccion-countdown {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 0.8rem;
+        background: rgba(0, 0, 0, 0.3); /* Fondo sutil para dar contraste */
+        padding: 1rem;
+        border-radius: 15px;
       }
       .texto-countdown {
         font-size: 1rem;
         font-style: italic;
-        opacity: 0.9;
       }
       #countdown-container {
         display: flex;
-        gap: 1.5rem;
-        flex-wrap: wrap;
+        gap: 1.2rem;
+        flex-wrap: nowrap;
         justify-content: center;
       }
       .time-box {
         display: flex;
         flex-direction: column;
-        min-width: 60px;
+        min-width: 55px;
         align-items: center;
       }
       .time-number {
-        font-size: 2.2rem;
+        font-size: 2rem;
         font-weight: bold;
         font-family: var(--fuente-titulos);
         text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
       }
       .time-label {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 1px;
         color: var(--color-acento);
+      }
+
+      /* ── TAMAÑOS ESCALADOS (TABLET / PC) ── */
+      @media (min-width: 768px) {
+        h1 {
+          font-size: clamp(4rem, 8vw, 6rem);
+        }
+        .fecha {
+          font-size: 1.4rem;
+        }
+        .mensaje {
+          font-size: 1.3rem;
+        }
+        button#btn-abrir-modal {
+          font-size: 1.5rem;
+          max-width: 400px;
+        }
+        .time-number {
+          font-size: 2.5rem;
+        }
+        .time-label {
+          font-size: 0.9rem;
+        }
       }
 
       /* ── Modal ── */
@@ -158,17 +198,17 @@
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
       }
       dialog::backdrop {
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(8px);
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(5px);
       }
       .modal-header {
         background-color: transparent;
         padding: 10px 15px;
         display: flex;
-        justify-content: flex-end;
+        justify-content: flex-start; /* Aspa a la izquierda */
         position: absolute;
         top: 0;
-        right: 0;
+        left: 0;
         width: 100%;
         pointer-events: none;
       }
@@ -200,6 +240,7 @@
         border-radius: 12px;
         background-color: transparent;
       }
+
       .hidden {
         display: none !important;
       }
@@ -210,25 +251,19 @@
     <div id="overlay"></div>
 
     <main>
-      <div class="elemento" id="wrap-nombres">
-        <h1 id="ui-nombres"></h1>
-      </div>
-
+      <div class="elemento" id="wrap-nombres"><h1 id="ui-nombres"></h1></div>
       <div class="elemento" id="wrap-fecha">
         <p class="fecha" id="ui-fecha"></p>
       </div>
-
       <div class="elemento" id="wrap-mensaje">
         <p class="mensaje" id="ui-mensaje"></p>
       </div>
-
       <div class="elemento" id="wrap-boton">
         <button
           id="btn-abrir-modal"
           aria-label="Abrir formulario para subir fotos"
         ></button>
       </div>
-
       <div class="elemento" id="wrap-countdown">
         <div id="seccion-countdown">
           <p class="texto-countdown" id="ui-texto-countdown"></p>
@@ -273,169 +308,53 @@
 
     <script>
       /* ═══════════════════════════════════════════════════════════════════════════
-         ██████████  C O N F I G U R A C I Ó N  ██████████
+         ██████████  P A N E L   D E   C O N T R O L   M A E S T R O  ██████████
          ═══════════════════════════════════════════════════════════════════════════ */
       const CONFIG = {
-        /* ── TEXTOS ─────────────────────────────────────────────────────────────── */
+        visibilidad: {
+          nombres: true,
+          fecha: true,
+          mensaje: true,
+          boton: true,
+          countdown: true,
+        },
+
         nombres: "Lidia & Tomás",
         fechaTexto: "2 de mayo de 2026",
         mensajeBienvenida:
           "¡Ayudadnos a capturar la magia de nuestra boda! Usad este espacio para subir las fotos y vídeos que vayáis haciendo.",
         textoBoton: "📸 Subir Fotos",
         textoCountdown: "Aún tienes tiempo para subir tus mejores recuerdos:",
+        fechaBodaISO: "2026-05-02T00:00:00",
 
-        /* ── IMAGEN Y OVERLAY ───────────────────────────────────────────────────── */
-        urlImagenFondo: "/imagen/FOTO-BODA_w.webp",
+        urlImagenFondo: "imagen/FOTO-BODA_w.webp",
         urlGoogleScript:
           "https://script.google.com/macros/s/AKfycbwD6WvMSIZw0d7TWAFz7x5cLL6OheBeDgSmqMERExoWUWLAENmng_CcfPSnfW4g6C1wtQ/exec",
         overlayColor: "rgba(30, 20, 20, 0.65)",
 
-        /* ── COUNTDOWN ──────────────────────────────────────────────────────────── */
-        activarCountdown: true,
-        fechaBodaISO: "2026-05-02T00:00:00",
-
-        /* ═══════════════════════════════════════════════════════════════════════════
-           POSICIÓN DE CADA ELEMENTO
-           ═══════════════════════════════════════════════════════════════════════════
-
-           Usa porcentajes (%) para posicionar relativo a la pantalla.
-           Usa píxeles (px) si prefieres valores fijos.
-           Deja "" en las propiedades que no quieras usar.
-
-           PROPIEDADES:
-             top      → distancia desde el BORDE SUPERIOR de la pantalla
-             bottom   → distancia desde el BORDE INFERIOR
-             left     → distancia desde el BORDE IZQUIERDO
-             right    → distancia desde el BORDE DERECHO
-             transform→ ajuste extra. Ejemplos:
-                          "translateX(-50%)"         → centra en horizontal (usar con left:"50%")
-                          "translateY(-50%)"         → centra en vertical   (usar con top:"50%")
-                          "translate(-50%, -50%)"    → centra en ambos ejes (usar con top y left al 50%)
-                          "none"                     → sin ajuste
-             width    → anchura del bloque. "auto" o "500px" o "80%"
-             maxWidth → anchura máxima (evita que se salga en pantallas grandes)
-
-           RECETAS RÁPIDAS:
-           ┌─────────────────────────────────────────────────────────────────────┐
-           │ Centrado horizontal:  left:"50%",  transform:"translateX(-50%)"     │
-           │ Centrado total:       left:"50%", top:"50%", transform:"translate(-50%,-50%)"│
-           │ Arriba a la derecha:  right:"5%", top:"10%", left:"", transform:"none"      │
-           │ Abajo centrado:       left:"50%", bottom:"5%", top:"", transform:"translateX(-50%)" │
-           └─────────────────────────────────────────────────────────────────────┘
-           ═══════════════════════════════════════════════════════════════════════════ */
-
-        /* ── POSICIONES EN ORDENADOR / TABLET (pantalla > 768px) ─────────────────── */
+        /* ── ESTRUCTURA (FLUIDA). Orden (1, 2, 3...) y Margen (espacio debajo) ──── */
+        /* Configuración para ORDENADORES / TABLETS */
         posicionPC: {
-          nombres: {
-            top: "38%",
-            bottom: "",
-            left: "50%",
-            right: "",
-            transform: "translateX(-50%)",
-            width: "auto",
-            maxWidth: "90vw",
-          },
+          nombres: { orden: 1, margenAbajo: "17rem" },
+          fecha: { orden: 2, margenAbajo: "2rem" },
+          mensaje: { orden: 3, margenAbajo: "3rem" },
+          boton: { orden: 4, margenAbajo: "3rem" },
+          countdown: { orden: 5, margenAbajo: "0" },
+        },
 
-          fecha: {
-            top: "55%",
-            bottom: "",
-            left: "50%",
-            right: "",
-            transform: "translateX(-50%)",
-            width: "auto",
-            maxWidth: "90vw",
-          },
-
-          mensaje: {
-            top: "62%",
-            bottom: "",
-            left: "50%",
-            right: "",
-            transform: "translateX(-50%)",
-            width: "600px",
-            maxWidth: "90vw",
-          },
-
-          boton: {
-            top: "76%",
-            bottom: "",
-            left: "50%",
-            right: "",
-            transform: "translateX(-50%)",
-            width: "auto",
-            maxWidth: "90vw",
-          },
-
-          countdown: {
-            top: "86%",
-            bottom: "",
-            left: "50%",
-            right: "",
-            transform: "translateX(-50%)",
-            width: "auto",
-            maxWidth: "90vw",
-          },
-        } /* ── fin posicionPC ── */,
-
-        /* ── POSICIONES EN MÓVIL (pantalla ≤ 768px) ──────────────────────────────── */
+        /* Configuración para MÓVILES */
         posicionMovil: {
-          nombres: {
-            top: "30%",
-            bottom: "",
-            left: "50%",
-            right: "",
-            transform: "translateX(-50%)",
-            width: "auto",
-            maxWidth: "90vw",
-          },
-
-          fecha: {
-            top: "50%",
-            bottom: "",
-            left: "50%",
-            right: "",
-            transform: "translateX(-50%)",
-            width: "auto",
-            maxWidth: "90vw",
-          },
-
-          mensaje: {
-            top: "57%",
-            bottom: "",
-            left: "50%",
-            right: "",
-            transform: "translateX(-50%)",
-            width: "85vw",
-            maxWidth: "85vw",
-          },
-
-          boton: {
-            top: "74%",
-            bottom: "",
-            left: "50%",
-            right: "",
-            transform: "translateX(-50%)",
-            width: "auto",
-            maxWidth: "90vw",
-          },
-
-          countdown: {
-            top: "84%",
-            bottom: "",
-            left: "50%",
-            right: "",
-            transform: "translateX(-50%)",
-            width: "auto",
-            maxWidth: "90vw",
-          },
-        } /* ── fin posicionMovil ── */,
-      }; /* ← FIN CONFIG */
+          nombres: { orden: 1, margenAbajo: "12rem" },
+          fecha: { orden: 2, margenAbajo: "1.5rem" },
+          mensaje: { orden: 3, margenAbajo: "2.5rem" },
+          boton: { orden: 4, margenAbajo: "3rem" },
+          countdown: { orden: 5, margenAbajo: "0" },
+        },
+      };
 
       /* ═══════════════════════════════════════════════════════════════════════════
-         LÓGICA — no es necesario tocar nada a partir de aquí
+         LÓGICA DEL SISTEMA 
          ═══════════════════════════════════════════════════════════════════════════ */
-
-      // Textos
       document.getElementById("ui-nombres").textContent = CONFIG.nombres;
       document.getElementById("ui-fecha").textContent = CONFIG.fechaTexto;
       document.getElementById("ui-mensaje").textContent =
@@ -445,7 +364,21 @@
       document.getElementById("ui-texto-countdown").textContent =
         CONFIG.textoCountdown;
 
-      // Overlay e imagen
+      const MAPA_IDS = {
+        nombres: "wrap-nombres",
+        fecha: "wrap-fecha",
+        mensaje: "wrap-mensaje",
+        boton: "wrap-boton",
+        countdown: "wrap-countdown",
+      };
+
+      Object.entries(MAPA_IDS).forEach(([clave, id]) => {
+        const elemento = document.getElementById(id);
+        if (elemento && CONFIG.visibilidad[clave] === false) {
+          elemento.classList.add("hidden");
+        }
+      });
+
       document.getElementById("overlay").style.backgroundColor =
         CONFIG.overlayColor;
       if (CONFIG.urlImagenFondo) {
@@ -456,7 +389,6 @@
           "#2C1E16";
       }
 
-      // Google iframe
       if (
         CONFIG.urlGoogleScript &&
         !CONFIG.urlGoogleScript.includes("URL_DE_TU")
@@ -464,40 +396,26 @@
         document.getElementById("iframe-google").src = CONFIG.urlGoogleScript;
       }
 
-      // ── Aplicar posiciones ─────────────────────────────────────────────────────
-      const MAPA_IDS = {
-        nombres: "wrap-nombres",
-        fecha: "wrap-fecha",
-        mensaje: "wrap-mensaje",
-        boton: "wrap-boton",
-        countdown: "wrap-countdown",
-      };
-
-      function aplicarPosicion(bloque) {
+      /* Función que inyecta Orden y Margen inferior en vez de posiciones absolutas */
+      function aplicarDistribucion(bloquePosiciones) {
         Object.entries(MAPA_IDS).forEach(([clave, id]) => {
           const el = document.getElementById(id);
-          const p = bloque[clave];
-          if (!el || !p) return;
-          el.style.setProperty("--el-top", p.top || "auto");
-          el.style.setProperty("--el-left", p.left || "auto");
-          el.style.setProperty("--el-right", p.right || "auto");
-          el.style.setProperty("--el-bottom", p.bottom || "auto");
-          el.style.setProperty("--el-transform", p.transform || "none");
-          el.style.setProperty("--el-width", p.width || "auto");
-          el.style.setProperty("--el-max-width", p.maxWidth || "90vw");
+          const configElem = bloquePosiciones[clave];
+          if (!el || !configElem) return;
+          el.style.setProperty("--el-orden", configElem.orden);
+          el.style.setProperty("--el-margen-abajo", configElem.margenAbajo);
         });
       }
 
       const mediaMovil = window.matchMedia("(max-width: 768px)");
-
       function actualizarLayout(e) {
-        aplicarPosicion(e.matches ? CONFIG.posicionMovil : CONFIG.posicionPC);
+        aplicarDistribucion(
+          e.matches ? CONFIG.posicionMovil : CONFIG.posicionPC,
+        );
       }
-
       mediaMovil.addEventListener("change", actualizarLayout);
-      actualizarLayout(mediaMovil); // ejecutar al cargar la página
+      actualizarLayout(mediaMovil); // Ejecuta al iniciar
 
-      // ── Modal ──────────────────────────────────────────────────────────────────
       const modal = document.getElementById("modal-formulario");
       const btnAbrir = document.getElementById("btn-abrir-modal");
       const btnCerrar = document.getElementById("btn-cerrar-modal");
@@ -516,10 +434,7 @@
         }
       });
 
-      // ── Countdown ─────────────────────────────────────────────────────────────
-      if (!CONFIG.activarCountdown) {
-        document.getElementById("seccion-countdown").classList.add("hidden");
-      } else {
+      if (CONFIG.visibilidad.countdown) {
         const objetivo = new Date(CONFIG.fechaBodaISO).getTime();
         const tick = setInterval(() => {
           const diff = objetivo - Date.now();
