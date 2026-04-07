@@ -10,11 +10,21 @@
     <title>Sube tus fotos - Lidia y Tomás</title>
     <style>
       :root {
-        --color-texto-principal: #fff8f0;
-        --color-acento: #d4af37;
-        --color-boton: #d9b3a8;
-        --color-boton-hover: #c59a8e;
-        --overlay-color: rgba(30, 20, 20, 0.65);
+        /* ── LA PALETA DE LA NOVIA ── */
+        --color-rosa-claro: #e8cfc3;
+        --color-rosa: #d57a7f;
+        --color-rosa-intermedio: #9a6b65;
+        --color-rosa-oscuro: #4d151a;
+        --color-dorado: #daa520;
+
+        /* ── ASIGNACIÓN ARQUITECTÓNICA (Accesibilidad WCAG AAA) ── */
+        --color-texto-principal: var(--color-rosa-claro);
+        /* FIX: --color-claro no existe; el acento correcto es el dorado */
+        --color-acento: var(--color-dorado);
+        --color-boton: var(--color-rosa);
+        --color-texto-boton: var(--color-rosa-claro);
+        --color-boton-hover: var(--color-rosa-claro);
+
         --fuente-titulos: "Georgia", serif;
         --fuente-texto: "Helvetica Neue", Arial, sans-serif;
       }
@@ -27,13 +37,11 @@
 
       body,
       html {
-        /* Usamos dvh (Dynamic Viewport Height) para pantalla completa real en móviles */
-        min-height: 100dvh;
+        height: 100dvh;
         width: 100%;
         font-family: var(--fuente-texto);
         color: var(--color-texto-principal);
-        /* Quitamos overflow hidden para permitir scroll si la pantalla es enana, evitando recortes */
-        overflow-x: hidden;
+        overflow: hidden;
       }
 
       #background-container {
@@ -53,19 +61,18 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: var(--overlay-color);
+        /* El color de overlay ahora se inyecta desde JS usando el Rosa Oscuro */
         z-index: -1;
       }
 
-      /* ── ARQUITECTURA FLEXBOX (FLUIDA Y RELATIVA) ── */
       main {
         display: flex;
         flex-direction: column;
-        justify-content: center; /* Centra todo el bloque verticalmente */
-        align-items: center; /* Centra horizontalmente */
+        justify-content: center;
+        align-items: center;
         width: 100%;
-        min-height: 100dvh;
-        padding: 2rem 1rem; /* Márgenes de seguridad laterales */
+        height: 100%;
+        padding: 2vh 4vw;
       }
 
       .elemento {
@@ -73,53 +80,65 @@
         text-align: center;
         width: 100%;
         max-width: 90vw;
-        /* Las variables ahora controlan el orden y el espacio, inyectadas por JS */
         order: var(--el-orden, 0);
-        margin-bottom: var(--el-margen-abajo, 1rem);
+        margin-bottom: var(--el-margen-abajo, 1vh);
         transition: margin 0.3s ease;
       }
 
-      /* ── TAMAÑOS BASE (MOBILE FIRST - AUMENTADOS) ── */
-      h1 {
+      /* ── NOMBRES ── */
+      #ui-nombres {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.2rem;
+
         font-family: var(--fuente-titulos);
-        font-size: 3.5rem; /* Texto principal más grande */
+        font-size: clamp(2.5rem, 8vw, 4.5rem);
         font-weight: normal;
         line-height: 1.1;
-        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        text-shadow: 2px 2px 8px rgba(30, 10, 15, 0.8); /* Sombra adaptada a los tonos cálidos */
       }
+
+      .nexo-nombres {
+        color: var(--color-dorado);
+        font-size: 0.8em;
+      }
+
       .fecha {
-        font-size: 1.2rem;
+        font-size: clamp(1rem, 3vw, 1.3rem);
         letter-spacing: 2px;
         text-transform: uppercase;
-        color: var(--color-acento);
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+        color: var(--color-dorado);
+        text-shadow: 1px 1px 4px rgba(30, 10, 15, 0.8);
         font-weight: bold;
       }
       .mensaje {
-        font-size: 1.15rem; /* Mensaje más legible */
-        line-height: 1.6;
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+        font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+        line-height: 1.4;
+        text-shadow: 1px 1px 4px rgba(30, 10, 15, 0.8);
         margin: 0 auto;
-        max-width: 600px;
+        max-width: 650px;
       }
 
-      /* ── BOTÓN GIGANTE ── */
+      /* ── BOTÓN ── */
       button#btn-abrir-modal {
         background-color: var(--color-boton);
-        color: #2c1e16;
+        color: var(--color-texto-boton); /* Contraste perfecto para lectura */
         border: none;
-        padding: 1.2rem 2rem; /* Más área táctil */
-        font-size: 1.4rem; /* Letra más grande */
-        width: 100%; /* Ocupa todo el ancho en móvil */
-        max-width: 350px; /* Tope máximo para que no sea excesivo en tablet */
+        padding: clamp(0.8rem, 2vh, 1.2rem) clamp(1.5rem, 5vw, 3rem);
+        font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+        width: 100%;
+        max-width: 350px;
         border-radius: 50px;
         cursor: pointer;
         transition: all 0.3s ease;
         font-weight: bold;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 6px 20px rgba(77, 21, 26, 0.6); /* Sombra color burdeos */
       }
       button#btn-abrir-modal:hover {
         background-color: var(--color-boton-hover);
+        color: #fff; /* Al iluminarse el fondo, cambiamos letra a blanco por contraste */
         transform: translateY(-2px);
       }
 
@@ -128,60 +147,46 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.8rem;
-        background: rgba(0, 0, 0, 0.3); /* Fondo sutil para dar contraste */
-        padding: 1rem;
+        gap: 0.5rem;
+        /* Fondo usando el Rosa Intermedio de la novia con transparencia */
+        background: rgba(154, 107, 101, 0.35);
+        padding: clamp(0.5rem, 1.5vh, 1rem);
         border-radius: 15px;
+        backdrop-filter: blur(4px); /* Toque cristal muy moderno */
       }
       .texto-countdown {
-        font-size: 1rem;
+        font-size: clamp(0.8rem, 2vw, 1rem);
         font-style: italic;
       }
       #countdown-container {
         display: flex;
-        gap: 1.2rem;
+        gap: clamp(0.5rem, 2vw, 1.5rem);
         flex-wrap: nowrap;
         justify-content: center;
       }
       .time-box {
         display: flex;
         flex-direction: column;
-        min-width: 55px;
+        min-width: 50px;
         align-items: center;
       }
       .time-number {
-        font-size: 2rem;
+        font-size: clamp(1.5rem, 5vw, 2.5rem);
         font-weight: bold;
         font-family: var(--fuente-titulos);
-        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+        text-shadow: 2px 2px 6px rgba(30, 10, 15, 0.8);
       }
       .time-label {
-        font-size: 0.75rem;
+        font-size: clamp(0.6rem, 1.5vw, 0.8rem);
         text-transform: uppercase;
         letter-spacing: 1px;
         color: var(--color-acento);
       }
 
-      /* ── TAMAÑOS ESCALADOS (TABLET / PC) ── */
       @media (min-width: 768px) {
-        h1 {
-          font-size: clamp(4rem, 8vw, 6rem);
-        }
-        .fecha {
-          font-size: 1.4rem;
-        }
-        .mensaje {
-          font-size: 1.3rem;
-        }
-        button#btn-abrir-modal {
-          font-size: 1.5rem;
-          max-width: 400px;
-        }
-        .time-number {
-          font-size: 2.5rem;
-        }
-        .time-label {
-          font-size: 0.9rem;
+        #ui-nombres {
+          flex-direction: row;
+          gap: 1.5rem;
         }
       }
 
@@ -198,14 +203,15 @@
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
       }
       dialog::backdrop {
-        background: rgba(0, 0, 0, 0.85);
+        /* Usamos el Rosa Oscuro para desenfocar el fondo cuando se abre el modal */
+        background: rgba(77, 21, 26, 0.85);
         backdrop-filter: blur(5px);
       }
       .modal-header {
         background-color: transparent;
         padding: 10px 15px;
         display: flex;
-        justify-content: flex-start; /* Aspa a la izquierda */
+        justify-content: flex-start;
         position: absolute;
         top: 0;
         left: 0;
@@ -214,9 +220,9 @@
       }
       .btn-cerrar {
         pointer-events: auto;
-        background: rgba(0, 0, 0, 0.5);
-        border: 2px solid #fff;
-        color: #fff;
+        background: var(--color-rosa-oscuro);
+        border: 2px solid var(--color-rosa-claro);
+        color: var(--color-rosa-claro);
         font-size: 1.2rem;
         cursor: pointer;
         width: 35px;
@@ -229,7 +235,8 @@
         z-index: 10;
       }
       .btn-cerrar:hover {
-        background: rgba(0, 0, 0, 0.8);
+        background: var(--color-rosa);
+        color: #fff;
         transform: scale(1.1);
       }
       iframe {
@@ -238,7 +245,7 @@
         border: none;
         display: block;
         border-radius: 12px;
-        background-color: transparent;
+        background-color: #fff; /* Aseguramos fondo blanco para el formulario de Google */
       }
 
       .hidden {
@@ -299,10 +306,22 @@
           ✖
         </button>
       </div>
+      <!--
+        FIX CRÍTICO: allow="web-share; camera; microphone"
+        ════════════════════════════════════════════════════
+        Sin este atributo, navigator.share() lanza NotAllowedError
+        dentro del iframe y nunca abre el share sheet de iOS/Android.
+        Resultado visible: pulsar "Guardar en galería" no hace nada.
+
+        • web-share   → habilita navigator.share() con archivos (IMPRESCINDIBLE)
+        • camera      → permite acceder a la cámara desde el selector de archivos
+        • microphone  → permite grabar vídeo con audio desde el selector
+      -->
       <iframe
         id="iframe-google"
         src=""
         title="Formulario de Google para subir fotos"
+        allow="web-share; camera; microphone"
       ></iframe>
     </dialog>
 
@@ -319,7 +338,12 @@
           countdown: false,
         },
 
-        nombres: "Lidia & Tomás",
+        nombresEstructurados: {
+          persona1: "Lidia",
+          nexo: "&",
+          persona2: "Tomás",
+        },
+
         fechaTexto: "2 de mayo de 2026",
         mensajeBienvenida:
           "¡Ayudadnos a capturar la magia de nuestra boda! Usad este espacio para subir las fotos y vídeos que vayáis haciendo.",
@@ -329,25 +353,24 @@
 
         urlImagenFondo: "imagen/FOTO-BODA_w.webp",
         urlGoogleScript:
-          "https://script.google.com/macros/s/AKfycbzaBRt1oUTVPbrD_JN0nJs8rSwiTwvqQ6iBaSTvdqqQYQUSUmnbX9jvDPgfBVtXsGDLuw/exec",
-        overlayColor: "rgba(30, 20, 20, 0.65)",
+          "https://script.google.com/macros/s/AKfycbxAKynPWuACYEwzJWZmbrg-R69iQIVqQQ5pgQ9NVTB0KhUj1eDv6L9qxeZl1D2R-VUIQQ/exec",
 
-        /* ── ESTRUCTURA (FLUIDA). Orden (1, 2, 3...) y Margen (espacio debajo) ──── */
-        /* Configuración para ORDENADORES / TABLETS */
+        /* ── APLICAMOS EL ROSA OSCURO DE LA NOVIA COMO FILTRO (#4D151A convertido a RGBA) ── */
+        overlayColor: "rgba(77, 21, 26, 0.40)",
+
         posicionPC: {
-          nombres: { orden: 1, margenAbajo: "28rem" },
-          fecha: { orden: 2, margenAbajo: "2rem" },
-          mensaje: { orden: 3, margenAbajo: "3rem" },
-          boton: { orden: 4, margenAbajo: "3rem" },
+          nombres: { orden: 1, margenAbajo: "45vh" },
+          fecha: { orden: 2, margenAbajo: "3vh" },
+          mensaje: { orden: 3, margenAbajo: "5vh" },
+          boton: { orden: 4, margenAbajo: "5vh" },
           countdown: { orden: 5, margenAbajo: "0" },
         },
 
-        /* Configuración para MÓVILES */
         posicionMovil: {
-          nombres: { orden: 1, margenAbajo: "12rem" },
-          fecha: { orden: 2, margenAbajo: "1.5rem" },
-          mensaje: { orden: 3, margenAbajo: "2.5rem" },
-          boton: { orden: 4, margenAbajo: "3rem" },
+          nombres: { orden: 1, margenAbajo: "55vh" },
+          fecha: { orden: 2, margenAbajo: "2vh" },
+          mensaje: { orden: 3, margenAbajo: "4vh" },
+          boton: { orden: 4, margenAbajo: "6vh" },
           countdown: { orden: 5, margenAbajo: "0" },
         },
       };
@@ -355,7 +378,21 @@
       /* ═══════════════════════════════════════════════════════════════════════════
          LÓGICA DEL SISTEMA 
          ═══════════════════════════════════════════════════════════════════════════ */
-      document.getElementById("ui-nombres").textContent = CONFIG.nombres;
+      const contenedorNombres = document.getElementById("ui-nombres");
+      contenedorNombres.innerHTML = "";
+
+      const spanP1 = document.createElement("span");
+      spanP1.textContent = CONFIG.nombresEstructurados.persona1;
+
+      const spanNexo = document.createElement("span");
+      spanNexo.className = "nexo-nombres";
+      spanNexo.textContent = CONFIG.nombresEstructurados.nexo;
+
+      const spanP2 = document.createElement("span");
+      spanP2.textContent = CONFIG.nombresEstructurados.persona2;
+
+      contenedorNombres.append(spanP1, spanNexo, spanP2);
+
       document.getElementById("ui-fecha").textContent = CONFIG.fechaTexto;
       document.getElementById("ui-mensaje").textContent =
         CONFIG.mensajeBienvenida;
@@ -386,7 +423,7 @@
           `url('${CONFIG.urlImagenFondo}')`;
       } else {
         document.getElementById("background-container").style.backgroundColor =
-          "#2C1E16";
+          "#4D151A";
       }
 
       if (
@@ -396,7 +433,6 @@
         document.getElementById("iframe-google").src = CONFIG.urlGoogleScript;
       }
 
-      /* Función que inyecta Orden y Margen inferior en vez de posiciones absolutas */
       function aplicarDistribucion(bloquePosiciones) {
         Object.entries(MAPA_IDS).forEach(([clave, id]) => {
           const el = document.getElementById(id);
@@ -414,7 +450,7 @@
         );
       }
       mediaMovil.addEventListener("change", actualizarLayout);
-      actualizarLayout(mediaMovil); // Ejecuta al iniciar
+      actualizarLayout(mediaMovil);
 
       const modal = document.getElementById("modal-formulario");
       const btnAbrir = document.getElementById("btn-abrir-modal");
