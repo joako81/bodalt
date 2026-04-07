@@ -1,0 +1,1681 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Álbum de Boda</title>
+    <style>
+      /* ============================================================
+   🎨 PANEL MAESTRO DE DISEÑO Y COLORES
+   Cambia aquí colores, fuentes y fondos de manera sencilla
+   ============================================================ */
+      :root {
+        /* ── 1. FONDOS Y TARJETAS ── */
+        --bg: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        --card: rgba(255, 255, 255, 0.9);
+
+        /* ── 2. COLORES PRINCIPALES ── */
+        --txt: #2c3e50;
+        --muted: #64748b;
+        --gold: #d4af37;
+        --gold2: #b5952f; /* Color al pasar el ratón por botones */
+        --ok: #10b981; /* Verde éxito */
+        --err: #e11d48; /* Rojo error */
+        --rosa-oscuro: #4d151a;
+
+        /* ── 3. FUENTES (TIPOGRAFÍAS) ── */
+        --fB: system-ui, -apple-system, sans-serif; /* Texto normal */
+        --fH: Georgia, "Playfair Display", serif; /* Títulos elegantes */
+
+        /* ============================================================
+     ✒️ PANEL DE CONTROL DE TEXTOS Y BOTONES
+     ============================================================ */
+
+        /* Título Principal (H1 - "El álbum de todos") */
+        --titulo-color: var(--txt);
+        --titulo-tamano-min: 1.6rem; /* Tamaño en móviles */
+        --titulo-tamano-max: 2.2rem; /* Tamaño en PC */
+        --titulo-grosor: 700; /* 400 normal, 700 negrita */
+        --titulo-sombra: none; /* Ej: 2px 2px 4px rgba(0,0,0,0.2) */
+
+        /* Subtítulo (H2 - "Comparte tus fotos") */
+        --subtitulo-color: var(--muted);
+        --subtitulo-tamano-min: 1.1rem;
+        --subtitulo-tamano-max: 1.4rem;
+        --subtitulo-grosor: 800;
+
+        /* Texto descriptivo (P - "Sube los mejores momentos...") */
+        --texto-color: var(--muted);
+        --texto-tamano: 0.95rem;
+        --texto-grosor: 400;
+
+        /* Botones Generales */
+        --btn-fondo: var(--rosa-oscuro);
+        --btn-fondo-hover: var(--gold2);
+        --btn-color-texto: #ffffff;
+        --btn-redondeo: 9px; /* Cambia a 50px para botones en forma de píldora */
+        --btn-sombra: none; /* Ej: 0 4px 15px rgba(212, 175, 55, 0.4) */
+        --btn-elevacion: translateY(
+          -2px
+        ); /* Cuánto "salta" el botón al pasar el ratón */
+      }
+
+      /* ── Alto contraste (se activa con el botón 🌗) ── */
+      body.hc {
+        --bg: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+        --card: #111;
+        --txt: #fff;
+        --muted: #ccc;
+        --gold: #ff0;
+        --gold2: #fc0;
+        --titulo-color: #fff;
+        --subtitulo-color: #ccc;
+        --texto-color: #9a6b65;
+        --btn-color-texto: #000;
+      }
+      body.hc main {
+        border: 2px solid #fff;
+      }
+      body.hc .ab {
+        background: #222;
+        color: #fff;
+        border-color: #555;
+      }
+      body.hc input {
+        background: #222 !important;
+        color: #fff !important;
+        border-color: #555 !important;
+      }
+      body.hc .drop {
+        background: #1a1a1a;
+        border-color: #555;
+      }
+      body.hc .popup-box {
+        background: #111;
+        color: #fff;
+      }
+      body.hc .thumb-card {
+        background: #222;
+      }
+
+      /* ── Fuente dislexia (se activa con el botón Dx) ── */
+      body.dx {
+        font-family: "Comic Sans MS", cursive !important;
+        letter-spacing: 0.04em;
+      }
+
+      /* ── Reset y base ── */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        font-size: 16px;
+        transition: font-size 0.3s;
+      }
+      body {
+        background: var(--bg);
+        color: var(--txt);
+        font-family: var(--fB);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+      }
+
+      /* ============================================================
+   BOTONES DE ACCESIBILIDAD (esquina superior derecha)
+   ============================================================ */
+      .a11y {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        z-index: 999;
+      }
+      .ab {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 0.3rem 0.55rem;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #333;
+        backdrop-filter: blur(4px);
+      }
+
+      /* ============================================================
+   TARJETA CENTRAL Y TEXTOS (CONECTADOS AL PANEL MAESTRO)
+   ============================================================ */
+      main {
+        width: 100%;
+        max-width: 28rem;
+        background: var(--card);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        padding: 2rem 1.75rem;
+        border-radius: 18px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        text-align: center;
+      }
+
+      h1 {
+        font-family: var(--fH);
+        /* clamp asegura que el texto se adapte al móvil sin romperse */
+        font-size: clamp(
+          var(--titulo-tamano-min),
+          6vw,
+          var(--titulo-tamano-max)
+        );
+        color: var(--gold);
+        font-weight: var(--titulo-grosor);
+        text-shadow: var(--titulo-sombra);
+        margin-bottom: 0.4rem;
+        transition: color 0.3s ease;
+      }
+
+      h2 {
+        font-family: var(--fH);
+        font-size: clamp(
+          var(--subtitulo-tamano-min),
+          4vw,
+          var(--subtitulo-tamano-max)
+        );
+        color: var(--rosa-oscuro);
+        font-weight: var(--subtitulo-grosor);
+        margin-bottom: 0.3rem;
+        transition: color 0.3s ease;
+      }
+
+      .sub {
+        color: var(--titulo-color);
+        font-size: var(--texto-tamano);
+        font-weight: var(--texto-grosor);
+        margin-bottom: 1.4rem;
+        line-height: 1.5;
+        transition: color 0.3s ease;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ── Spinner de carga inicial ── */
+      .loading-ring {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e2e8f0;
+        border-top-color: var(--gold);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0.5rem auto;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ============================================================
+   SECCIÓN PIN
+   ============================================================ */
+      .ig {
+        margin-bottom: 1rem;
+        text-align: left;
+      }
+      label {
+        display: block;
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 9px;
+        font-size: 0.95rem;
+        background: rgba(255, 255, 255, 0.95);
+        color: #000;
+        transition: border-color 0.15s;
+      }
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--gold);
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20% {
+          transform: translateX(-8px);
+        }
+        40% {
+          transform: translateX(8px);
+        }
+        60% {
+          transform: translateX(-5px);
+        }
+        80% {
+          transform: translateX(5px);
+        }
+      }
+      .shake {
+        animation: shake 0.4s ease;
+      }
+
+      /* ============================================================
+   ZONA DE SOLTAR ARCHIVOS
+   ============================================================ */
+      .drop {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.75rem;
+        border: 2px dashed #cbd5e1;
+        border-radius: 11px;
+        background: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+      }
+      .drop.drag {
+        border-color: var(--gold);
+        background: rgba(212, 175, 55, 0.07);
+      }
+      .drop input[type="file"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .ico {
+        width: 30px;
+        height: 30px;
+        fill: var(--gold);
+        flex-shrink: 0;
+      }
+      .fm {
+        font-size: 0.88rem;
+        color: var(--muted);
+        font-weight: 600;
+        margin-top: 0.45rem;
+      }
+
+      /* ============================================================
+   BOTÓN PRINCIPAL (CONECTADO AL PANEL MAESTRO)
+   ============================================================ */
+      .btn {
+        width: 100%;
+        padding: 0.9rem;
+        background: var(--btn-fondo);
+        color: var(--btn-color-texto);
+        border: none;
+        border-radius: var(--btn-redondeo);
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 0.9rem;
+        box-shadow: var(--btn-sombra);
+        transition:
+          background 0.2s ease,
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          opacity 0.15s;
+      }
+      .btn:hover {
+        background: var(--btn-fondo-hover);
+        transform: var(--btn-elevacion);
+      }
+      .btn:active {
+        transform: translateY(0); /* Efecto de "pulsación" al hacer click */
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .btn-ok {
+        background: var(--ok) !important;
+      }
+      .btn-ok:hover {
+        background: #059669 !important;
+      }
+
+      .btn-outline {
+        background: transparent !important;
+        color: var(--txt) !important;
+        border: 2px solid #cbd5e1 !important;
+        box-shadow: none;
+      }
+      .btn-outline:hover {
+        border-color: var(--gold) !important;
+        color: var(--gold) !important;
+        box-shadow: none;
+      }
+
+      /* ============================================================
+   ZONA DE PROGRESO
+   ============================================================ */
+      .pz {
+        margin-top: 1.25rem;
+      }
+
+      .pbar-wrap {
+        width: 100%;
+        background: #e2e8f0;
+        border-radius: 20px;
+        height: 16px;
+        overflow: hidden;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.07);
+      }
+      .pbar {
+        height: 100%;
+        width: 0%;
+        background: var(--gold);
+        background-image: linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.18) 25%,
+          transparent 25%,
+          transparent 50%,
+          rgba(255, 255, 255, 0.18) 50%,
+          rgba(255, 255, 255, 0.18) 75%,
+          transparent 75%,
+          transparent
+        );
+        background-size: 1rem 1rem;
+        transition: width 0.28s ease;
+        border-radius: 20px;
+      }
+      .pbar.anim {
+        animation: stripe 1s linear infinite;
+      }
+      @keyframes stripe {
+        from {
+          background-position: 1rem 0;
+        }
+        to {
+          background-position: 0 0;
+        }
+      }
+
+      .pstats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.45rem;
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .ppct {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--txt);
+      }
+      .pspeed {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .pgrid {
+        margin-top: 0.7rem;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .prow {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.76rem;
+        color: var(--muted);
+      }
+      .pname {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+      }
+      .pmw {
+        width: 66px;
+        background: #e2e8f0;
+        border-radius: 10px;
+        height: 5px;
+        flex-shrink: 0;
+      }
+      .pm {
+        height: 100%;
+        width: 0%;
+        background: var(--gold);
+        border-radius: 10px;
+        transition: width 0.22s;
+      }
+      .pm.done {
+        background: var(--ok);
+      }
+      .pchk {
+        flex-shrink: 0;
+        font-size: 0.82rem;
+      }
+
+      .err-txt {
+        color: var(--err);
+        margin-top: 10px;
+        font-weight: 700;
+        font-size: 0.88rem;
+      }
+
+      /* ============================================================
+   POPUP GALERÍA
+   ============================================================ */
+      .popup-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 1000;
+        animation: fadeIn 0.2s ease;
+      }
+      .popup-box {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1001;
+        background: #fff;
+        border-radius: 20px;
+        padding: 1.5rem;
+        width: min(92vw, 680px);
+        max-height: 88vh;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        animation: slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        overflow: hidden;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -44%);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      .popup-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .popup-titulo {
+        font-family: var(--fH);
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--txt);
+      }
+      .popup-close {
+        background: #f1f5f9;
+        border: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .popup-close:hover {
+        background: var(--err);
+        color: #fff;
+      }
+
+      .popup-sub {
+        font-size: 0.87rem;
+        color: var(--muted);
+        text-align: center;
+        flex-shrink: 0;
+        line-height: 1.5;
+      }
+
+      .popup-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.6rem;
+        overflow-y: auto;
+        flex: 1;
+        padding-right: 2px;
+      }
+      .popup-grid::-webkit-scrollbar {
+        width: 5px;
+      }
+      .popup-grid::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .popup-grid::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+
+      .thumb-card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #f1f5f9;
+        aspect-ratio: 1 / 1;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition:
+          border-color 0.15s,
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+      .thumb-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+      }
+      .thumb-card.sel {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+      }
+
+      .thumb-card img,
+      .thumb-card video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        pointer-events: none;
+      }
+
+      .thumb-check {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--gold);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: scale(0.6);
+        transition:
+          opacity 0.15s,
+          transform 0.15s;
+        pointer-events: none;
+      }
+      .thumb-card.sel .thumb-check {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .thumb-vid-badge {
+        position: absolute;
+        bottom: 6px;
+        left: 6px;
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+        font-size: 0.68rem;
+        padding: 2px 6px;
+        border-radius: 20px;
+        pointer-events: none;
+      }
+
+      .popup-actions {
+        display: flex;
+        gap: 0.6rem;
+        flex-shrink: 0;
+      }
+      .popup-actions .btn {
+        margin-top: 0;
+        flex: 1;
+        padding: 0.75rem;
+        font-size: 0.95rem;
+      }
+
+      .popup-count {
+        font-size: 0.82rem;
+        color: var(--muted);
+        text-align: center;
+        flex-shrink: 0;
+        min-height: 1.1rem;
+      }
+
+      .popup-aviso {
+        font-size: 0.8rem;
+        color: var(--muted);
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.6rem 0.8rem;
+        text-align: center;
+        flex-shrink: 0;
+        line-height: 1.5;
+        display: none;
+      }
+      .popup-aviso.visible {
+        display: block;
+      }
+
+      /* ============================================================
+   LIGHTBOX
+   ============================================================ */
+      .lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 1100;
+        background: rgba(0, 0, 0, 0.92);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.18s ease;
+        padding: 1rem;
+        touch-action: pan-y;
+      }
+      .lightbox img,
+      .lightbox video {
+        max-width: 100%;
+        max-height: 90vh;
+        border-radius: 10px;
+        object-fit: contain;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+        pointer-events: auto;
+      }
+      .lightbox video {
+        background: #000;
+      }
+
+      .lb-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: #fff;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 1.3rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+        transition: background 0.15s;
+        pointer-events: auto;
+      }
+      .lb-close:hover {
+        background: var(--err);
+      }
+
+      .lb-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: #fff;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        font-size: 1.4rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+        transition: background 0.15s;
+        pointer-events: auto;
+      }
+      .lb-nav:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .lb-prev {
+        left: 12px;
+      }
+      .lb-next {
+        right: 12px;
+      }
+
+      .lb-info {
+        position: absolute;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        font-size: 0.8rem;
+        padding: 4px 14px;
+        border-radius: 20px;
+        white-space: nowrap;
+        pointer-events: none;
+      }
+
+      .lb-hint {
+        position: absolute;
+        top: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+        font-size: 0.75rem;
+        padding: 4px 12px;
+        border-radius: 20px;
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+      .lb-hint.visible {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="a11y" aria-label="Accesibilidad">
+      <button
+        class="ab"
+        onclick="document.body.classList.toggle('hc')"
+        title="Alto contraste"
+      >
+        🌗
+      </button>
+      <button class="ab" onclick="adjTxt(-1)" title="Reducir texto">A−</button>
+      <button class="ab" onclick="adjTxt(1)" title="Aumentar texto">A+</button>
+      <button
+        class="ab"
+        onclick="document.body.classList.toggle('dx')"
+        title="Fuente dislexia"
+      >
+        Dx
+      </button>
+    </nav>
+
+    <main>
+      <h1 id="titulo">El álbum de todos</h1>
+      <h2>Sé nuestro fotógrafo/a especial</h2>
+      <p class="sub">
+        Comparte los mejores momentos y dedicatorias de este gran día para
+        hacerlo inolvidable
+      </p>
+
+      <section id="sec-loading">
+        <div class="loading-ring" role="status" aria-label="Cargando…"></div>
+        <p class="sub" style="margin-top: 0.7rem; margin-bottom: 0">
+          Preparando el álbum…
+        </p>
+      </section>
+
+      <section id="sec-pin" class="hidden">
+        <div class="ig">
+          <label for="pin">Código de invitado</label>
+          <input
+            type="text"
+            id="pin"
+            placeholder="Ej: BODA2026"
+            autocomplete="off"
+            autocapitalize="characters"
+            onkeydown="if (event.key === 'Enter') validarPin();"
+          />
+        </div>
+        <button class="btn" onclick="validarPin()">Entrar al Álbum</button>
+        <p id="err-pin" class="err-txt hidden">❌ Código incorrecto.</p>
+      </section>
+
+      <section id="sec-subida" class="hidden">
+        <div class="drop" id="drop">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 4h3l2-2h6l2 2h3c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4
+          c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm8 3c-2.76 0-5 2.24-5 5s2.24
+          5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3
+          3 1.35 3 3-1.35 3-3 3z"
+            />
+          </svg>
+          <span class="fm" id="fm">Toca aquí para elegir fotos / vídeos</span>
+          <input
+            type="file"
+            id="fi"
+            multiple
+            accept="image/*,image/heic,image/heif,video/mp4,video/quicktime,video/mov"
+            onchange="onFC()"
+          />
+        </div>
+
+        <button class="btn" id="btn" onclick="iniciar()">
+          Subir Recuerdos ✨
+        </button>
+
+        <button
+          class="btn btn-ok hidden"
+          id="btn-save"
+          onclick="abrirPopupGaleria()"
+        >
+          📷 Ver y guardar en tu móvil
+        </button>
+
+        <div class="pz hidden" id="pz">
+          <div class="pbar-wrap">
+            <div class="pbar anim" id="pbar"></div>
+          </div>
+          <div class="pstats">
+            <span class="ppct" id="ppct">0%</span>
+            <span class="pspeed" id="pspd"></span>
+            <span id="peta"></span>
+          </div>
+          <div class="pgrid" id="pgrid"></div>
+        </div>
+      </section>
+    </main>
+
+    <div
+      id="popup-galeria"
+      class="hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Galería de fotos"
+    >
+      <div class="popup-overlay" onclick="cerrarPopup()"></div>
+
+      <div class="popup-box">
+        <div class="popup-header">
+          <span class="popup-titulo">Tus recuerdos 📸</span>
+          <button
+            class="popup-close"
+            onclick="cerrarPopup()"
+            aria-label="Cerrar"
+          >
+            ✕
+          </button>
+        </div>
+
+        <p class="popup-sub">
+          Toca una foto para verla a pantalla completa · Mantén pulsado para
+          marcar/desmarcar
+        </p>
+
+        <div class="popup-grid" id="popup-grid"></div>
+
+        <p class="popup-count" id="popup-count"></p>
+
+        <div class="popup-aviso" id="popup-aviso"></div>
+
+        <div class="popup-actions">
+          <button class="btn btn-outline" id="btn-all" onclick="toggleTodo()">
+            Seleccionar todo
+          </button>
+          <button
+            class="btn btn-ok"
+            id="btn-guardar"
+            onclick="guardarSeleccion()"
+            disabled
+          >
+            💾 Guardar en galería
+          </button>
+        </div>
+      </div>
+
+      <div id="lightbox" class="lightbox hidden">
+        <button
+          class="lb-nav lb-prev"
+          onclick="lbNav(-1)"
+          aria-label="Anterior"
+        >
+          ‹
+        </button>
+        <img id="lb-img" src="" alt="Vista ampliada" style="display: none" />
+        <video id="lb-vid" controls style="display: none"></video>
+        <button
+          class="lb-nav lb-next"
+          onclick="lbNav(1)"
+          aria-label="Siguiente"
+        >
+          ›
+        </button>
+        <button class="lb-close" onclick="cerrarLightbox()" aria-label="Cerrar">
+          ✕
+        </button>
+        <span class="lb-info" id="lb-info"></span>
+        <span class="lb-hint" id="lb-hint">Mantén pulsado para guardar</span>
+      </div>
+    </div>
+
+    <script>
+      // ============================================================
+      // CONFIGURACIÓN DE VELOCIDAD DE SUBIDA
+      // ============================================================
+      const CHUNK_BYTES = 3 * 1024 * 1024; // 3 MB por chunk
+      const PAR_CHUNKS = 3; // Chunks en paralelo
+      const PAR_FILES = 2; // Archivos simultáneos
+
+      // ============================================================
+      // ESTADO GLOBAL
+      // ============================================================
+      let archivosSeleccionados = [];
+      let seleccionados = [];
+      let urlsPreview = [];
+      let lbIndex = 0;
+      let fuenteEsInput = false;
+
+      // ============================================================
+      // PIN
+      // ============================================================
+      let pinIntentosFallidos = 0;
+      let pinBloqueadoHasta = 0;
+
+      // ============================================================
+      // ACCESIBILIDAD
+      // ============================================================
+      let tvl = 1;
+      function adjTxt(d) {
+        tvl = Math.max(1, Math.min(4, tvl + d));
+        document.documentElement.style.fontSize = [
+          "16px",
+          "20px",
+          "24px",
+          "28px",
+        ][tvl - 1];
+      }
+
+      // ============================================================
+      // HELPERS
+      // ============================================================
+      const $ = (id) => document.getElementById(id);
+      const sh = (id) => $(id).classList.remove("hidden");
+      const hd = (id) => $(id).classList.add("hidden");
+
+      // ============================================================
+      // DETECCIÓN DE PLATAFORMA
+      // ============================================================
+      const UA = navigator.userAgent;
+      function esIOS() {
+        return (
+          /iPhone|iPad|iPod/i.test(UA) ||
+          (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+        );
+      }
+      function esAndroid() {
+        return /Android/i.test(UA);
+      }
+      function esMobile() {
+        return esIOS() || esAndroid() || navigator.maxTouchPoints > 1;
+      }
+      function tieneWebShare() {
+        return (
+          typeof navigator.share === "function" &&
+          typeof navigator.canShare === "function"
+        );
+      }
+
+      // ============================================================
+      // DROP ZONE
+      // ============================================================
+      function onFC() {
+        const fromInput = Array.from($("fi").files);
+        if (fromInput.length > 0) {
+          archivosSeleccionados = fromInput;
+          fuenteEsInput = true;
+        }
+        const n = archivosSeleccionados.length;
+        $("fm").textContent =
+          n === 0
+            ? "Toca aquí para elegir fotos / vídeos"
+            : n === 1
+              ? "1 archivo seleccionado"
+              : n + " archivos seleccionados";
+        hd("btn-save");
+      }
+
+      const dropEl = $("drop");
+      ["dragenter", "dragover"].forEach((ev) =>
+        dropEl.addEventListener(
+          ev,
+          (e) => {
+            e.preventDefault();
+            dropEl.classList.add("drag");
+          },
+          { passive: false },
+        ),
+      );
+      dropEl.addEventListener("dragleave", () =>
+        dropEl.classList.remove("drag"),
+      );
+      dropEl.addEventListener(
+        "drop",
+        (e) => {
+          e.preventDefault();
+          dropEl.classList.remove("drag");
+          const dt = e.dataTransfer;
+          if (dt && dt.files && dt.files.length) {
+            archivosSeleccionados = Array.from(dt.files);
+            fuenteEsInput = false;
+            onFC();
+          }
+        },
+        { passive: false },
+      );
+
+      // ============================================================
+      // CONFIGURACIÓN REMOTA
+      // ============================================================
+      let cfg = {};
+      document.addEventListener("DOMContentLoaded", () => {
+        try {
+          google.script.run
+            .withSuccessHandler(aplicarCfg)
+            .withFailureHandler(() =>
+              aplicarCfg({ PEDIR_PIN: "NO", TITULO_WEB: "El álbum de todos" }),
+            )
+            .obtenerConfiguracion();
+        } catch (e) {
+          aplicarCfg({ PEDIR_PIN: "NO", TITULO_WEB: "El álbum de todos" });
+        }
+      });
+
+      function aplicarCfg(c) {
+        cfg = c;
+        hd("sec-loading");
+        if (c.TITULO_WEB) $("titulo").textContent = c.TITULO_WEB;
+        const pin = (c.PEDIR_PIN || "NO")
+          .trim()
+          .toUpperCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        sh(pin === "SI" ? "sec-pin" : "sec-subida");
+      }
+
+      // ============================================================
+      // PIN
+      // ============================================================
+      function validarPin() {
+        if (Date.now() < pinBloqueadoHasta) {
+          const seg = Math.ceil((pinBloqueadoHasta - Date.now()) / 1000);
+          $("err-pin").textContent =
+            "🔒 Demasiados intentos. Espera " + seg + "s.";
+          sh("err-pin");
+          return;
+        }
+        const v = $("pin").value.trim().toUpperCase();
+        const s = (cfg.PIN_SECRETO || "").trim().toUpperCase();
+        if (v === s) {
+          pinIntentosFallidos = 0;
+          hd("sec-pin");
+          sh("sec-subida");
+          hd("err-pin");
+        } else {
+          pinIntentosFallidos++;
+          if (pinIntentosFallidos >= 3) {
+            pinBloqueadoHasta = Date.now() + 30000;
+            pinIntentosFallidos = 0;
+            $("err-pin").textContent =
+              "🔒 Demasiados intentos. Espera 30 segundos.";
+          } else {
+            $("err-pin").textContent = "❌ Código incorrecto.";
+          }
+          sh("err-pin");
+          const input = $("pin");
+          input.classList.remove("shake");
+          void input.offsetWidth;
+          input.classList.add("shake");
+          setTimeout(() => input.classList.remove("shake"), 400);
+          $("pin").focus();
+        }
+      }
+
+      const LIMITE_CAPTURA_MS = 15 * 60 * 1000;
+      function esCapturaDirecta() {
+        if (!esMobile() || !fuenteEsInput) return false;
+        const ahora = Date.now();
+        return archivosSeleccionados.some(
+          (f) => ahora - f.lastModified <= LIMITE_CAPTURA_MS,
+        );
+      }
+
+      function resetearTodo() {
+        archivosSeleccionados = [];
+        fuenteEsInput = false;
+        seleccionados = [];
+        urlsPreview.forEach((u) => URL.revokeObjectURL(u));
+        urlsPreview = [];
+        try {
+          $("fi").value = "";
+        } catch (_) {}
+        $("fm").textContent = "Toca aquí para elegir fotos / vídeos";
+        hd("btn-save");
+        hd("pz");
+        const pb = $("pbar");
+        pb.style.width = "0%";
+        pb.style.background = "";
+        pb.style.backgroundImage = "";
+        pb.classList.remove("anim");
+        $("ppct").textContent = "0%";
+        $("pspd").textContent = "";
+        $("peta").textContent = "";
+        $("pgrid").innerHTML = "";
+        P.total = 0;
+        P.chunks = 0;
+        P.assembled = 0;
+        P.t0 = 0;
+      }
+
+      const P = { total: 0, chunks: 0, assembled: 0, t0: 0 };
+
+      function updBar() {
+        const pct =
+          P.total > 0
+            ? (P.chunks / P.total) * 90 + (P.assembled / P.total) * 10
+            : 0;
+        $("pbar").style.width = pct.toFixed(1) + "%";
+        $("ppct").textContent = Math.floor(pct) + "%";
+        const segs = (Date.now() - P.t0) / 1000;
+        const mbps = segs > 0.5 ? P.chunks / 1048576 / segs : 0;
+        const restaMB = (P.total - P.chunks) / 1048576;
+        const eta = mbps > 0 ? restaMB / mbps : 0;
+        $("pspd").textContent = mbps > 0.05 ? mbps.toFixed(1) + " MB/s" : "";
+        $("peta").textContent =
+          eta > 1 ? "~" + Math.ceil(eta) + "s" : eta > 0 ? "Casi listo…" : "";
+      }
+
+      function mkRows(files) {
+        const grid = $("pgrid");
+        grid.innerHTML = "";
+        files.forEach((f, i) => {
+          const row = document.createElement("div");
+          row.className = "prow";
+          const name = document.createElement("span");
+          name.className = "pname";
+          name.textContent = f.name;
+          name.title = f.name;
+          const mw = document.createElement("div");
+          mw.className = "pmw";
+          const m = document.createElement("div");
+          m.className = "pm";
+          m.id = "m" + i;
+          mw.appendChild(m);
+          const chk = document.createElement("span");
+          chk.className = "pchk";
+          chk.id = "k" + i;
+          chk.textContent = "⏳";
+          row.appendChild(name);
+          row.appendChild(mw);
+          row.appendChild(chk);
+          grid.appendChild(row);
+        });
+      }
+
+      function updFile(i, pct, done) {
+        const m = $("m" + i),
+          k = $("k" + i);
+        if (!m) return;
+        m.style.width = Math.min(100, pct).toFixed(0) + "%";
+        if (done) {
+          m.classList.add("done");
+          k.textContent = "✅";
+        }
+      }
+
+      function u8b64(bytes) {
+        const BLOQUE = 32768;
+        let s = "";
+        for (let i = 0; i < bytes.length; i += BLOQUE)
+          s += String.fromCharCode.apply(null, bytes.subarray(i, i + BLOQUE));
+        return btoa(s);
+      }
+
+      function readBuf(file) {
+        return new Promise((res, rej) => {
+          const r = new FileReader();
+          r.onload = (e) => res(e.target.result);
+          r.onerror = () => rej(new Error("No se pudo leer: " + file.name));
+          r.readAsArrayBuffer(file);
+        });
+      }
+
+      function gs(fn, ...args) {
+        return new Promise((res, rej) => {
+          function intento(n) {
+            google.script.run
+              .withSuccessHandler(res)
+              .withFailureHandler((e) => {
+                if (n > 0) setTimeout(() => intento(n - 1), 1500);
+                else rej(new Error(e.message || String(e)));
+              })
+              [fn](...args);
+          }
+          intento(1);
+        });
+      }
+
+      async function procesar(file, fileIdx) {
+        const sessionId =
+          Date.now() +
+          "_" +
+          fileIdx +
+          "_" +
+          Math.random().toString(36).substr(2, 8);
+        const nombreFinal =
+          Date.now() +
+          "_" +
+          fileIdx +
+          "_" +
+          file.name.replace(/[^a-zA-Z0-9.\-]/g, "_");
+        const tipo = file.type || "application/octet-stream";
+        const buffer = await readBuf(file);
+        const raw = new Uint8Array(buffer);
+        const totalChunks = Math.ceil(raw.length / CHUNK_BYTES) || 1;
+        let chunksDone = 0;
+        for (let b = 0; b < totalChunks; b += PAR_CHUNKS) {
+          await Promise.all(
+            Array.from(
+              { length: Math.min(PAR_CHUNKS, totalChunks - b) },
+              (_, j) => {
+                const i = b + j;
+                const slice = raw.slice(i * CHUNK_BYTES, (i + 1) * CHUNK_BYTES);
+                const sz = slice.length;
+                return gs(
+                  "subirChunk",
+                  sessionId,
+                  i,
+                  nombreFinal,
+                  tipo,
+                  u8b64(slice),
+                ).then(() => {
+                  P.chunks += sz;
+                  chunksDone++;
+                  updFile(fileIdx, (chunksDone / totalChunks) * 100, false);
+                  updBar();
+                });
+              },
+            ),
+          );
+        }
+        await gs("ensamblarArchivo", sessionId, totalChunks, nombreFinal, tipo);
+        P.assembled += file.size;
+        updBar();
+        updFile(fileIdx, 100, true);
+      }
+
+      let wakeLock = null;
+      function _beforeUnloadHandler(e) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+
+      document.addEventListener("visibilitychange", async () => {
+        if (
+          document.visibilityState === "visible" &&
+          wakeLock === null &&
+          $("btn") &&
+          $("btn").disabled
+        ) {
+          try {
+            if ("wakeLock" in navigator)
+              wakeLock = await navigator.wakeLock.request("screen");
+          } catch (_) {}
+        }
+      });
+
+      async function iniciar() {
+        if (!archivosSeleccionados.length) {
+          alert("Selecciona al menos un archivo.");
+          return;
+        }
+        try {
+          if ("wakeLock" in navigator)
+            wakeLock = await navigator.wakeLock.request("screen");
+        } catch (_) {}
+        window.addEventListener("beforeunload", _beforeUnloadHandler);
+        P.total = archivosSeleccionados.reduce((s, f) => s + f.size, 0);
+        P.chunks = 0;
+        P.assembled = 0;
+        P.t0 = Date.now();
+        $("btn").disabled = true;
+        hd("btn-save");
+        sh("pz");
+        mkRows(archivosSeleccionados);
+        updBar();
+        const pb = $("pbar");
+        pb.style.background = "";
+        pb.style.backgroundImage = "";
+        pb.classList.add("anim");
+
+        try {
+          for (let i = 0; i < archivosSeleccionados.length; i += PAR_FILES)
+            await Promise.all(
+              archivosSeleccionados
+                .slice(i, i + PAR_FILES)
+                .map((f, j) => procesar(f, i + j)),
+            );
+          pb.classList.remove("anim");
+          pb.style.background = "var(--ok)";
+          pb.style.backgroundImage = "none";
+          $("ppct").textContent = "100%";
+          $("pspd").textContent = "";
+          $("peta").textContent = "¡Listo! 🥂";
+          if (esCapturaDirecta()) {
+            const nF = archivosSeleccionados.filter(
+              (f) => !f.type.startsWith("video/"),
+            ).length;
+            const nV = archivosSeleccionados.filter((f) =>
+              f.type.startsWith("video/"),
+            ).length;
+            let txt = "📷 Ver y guardar ";
+            if (nF && nV)
+              txt +=
+                nF +
+                " foto" +
+                (nF > 1 ? "s" : "") +
+                " y " +
+                nV +
+                " vídeo" +
+                (nV > 1 ? "s" : "");
+            else if (nF) txt += nF + " foto" + (nF > 1 ? "s" : "");
+            else txt += nV + " vídeo" + (nV > 1 ? "s" : "");
+            $("btn-save").textContent = txt;
+            sh("btn-save");
+          } else {
+            setTimeout(resetearTodo, 3000);
+          }
+        } catch (err) {
+          pb.classList.remove("anim");
+          alert("❌ Error:\n" + err.message);
+          $("peta").textContent = "Error. Inténtalo de nuevo.";
+        } finally {
+          $("btn").disabled = false;
+          window.removeEventListener("beforeunload", _beforeUnloadHandler);
+          if (wakeLock) {
+            try {
+              wakeLock.release();
+            } catch (_) {}
+            wakeLock = null;
+          }
+        }
+      }
+
+      function abrirPopupGaleria() {
+        urlsPreview.forEach((u) => URL.revokeObjectURL(u));
+        urlsPreview = [];
+        seleccionados = archivosSeleccionados.map(() => true);
+        const grid = $("popup-grid");
+        grid.innerHTML = "";
+        archivosSeleccionados.forEach((file, i) => {
+          const url = URL.createObjectURL(file);
+          urlsPreview.push(url);
+          const esVideo = file.type.startsWith("video/");
+          const card = document.createElement("div");
+          card.className = "thumb-card sel";
+          card.title = file.name;
+          card.setAttribute("role", "checkbox");
+          card.setAttribute("aria-checked", "true");
+          card.setAttribute("tabindex", "0");
+          if (esVideo) {
+            const vid = document.createElement("video");
+            vid.src = url;
+            vid.preload = "metadata";
+            vid.addEventListener(
+              "loadedmetadata",
+              () => {
+                vid.currentTime = 0.1;
+              },
+              { once: true },
+            );
+            card.appendChild(vid);
+            const badge = document.createElement("span");
+            badge.className = "thumb-vid-badge";
+            badge.textContent = "🎬 vídeo";
+            card.appendChild(badge);
+          } else {
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = file.name;
+            img.loading = "lazy";
+            card.appendChild(img);
+          }
+          const chk = document.createElement("span");
+          chk.className = "thumb-check";
+          chk.textContent = "✓";
+          chk.setAttribute("aria-hidden", "true");
+          card.appendChild(chk);
+          card.addEventListener("click", () => {
+            if (seleccionados[i]) abrirLightbox(i);
+            else toggleThumb(i, card);
+          });
+          card.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (seleccionados[i]) abrirLightbox(i);
+              else toggleThumb(i, card);
+            }
+          });
+          let pressTimer;
+          card.addEventListener("pointerdown", () => {
+            pressTimer = setTimeout(() => toggleThumb(i, card), 320);
+          });
+          card.addEventListener("pointerup", () => clearTimeout(pressTimer));
+          card.addEventListener("pointercancel", () =>
+            clearTimeout(pressTimer),
+          );
+          grid.appendChild(card);
+        });
+        const aviso = $("popup-aviso");
+        if (esIOS() && !tieneWebShare()) {
+          aviso.textContent =
+            "📌 Para guardar: toca una foto para ampliarla y mantén pulsada la imagen.";
+          aviso.classList.add("visible");
+        } else {
+          aviso.classList.remove("visible");
+        }
+        actualizarContador();
+        sh("popup-galeria");
+        setTimeout(
+          () => $("popup-galeria").querySelector(".popup-close").focus(),
+          50,
+        );
+      }
+
+      function toggleThumb(i, card) {
+        seleccionados[i] = !seleccionados[i];
+        card.classList.toggle("sel", seleccionados[i]);
+        card.setAttribute("aria-checked", String(seleccionados[i]));
+        actualizarContador();
+      }
+
+      function actualizarContador() {
+        const n = seleccionados.filter(Boolean).length,
+          total = seleccionados.length;
+        $("popup-count").textContent =
+          n === 0
+            ? "Ninguna seleccionada"
+            : n === total
+              ? "Todas seleccionadas (" + total + ")"
+              : n + " de " + total + " seleccionadas";
+        $("btn-guardar").disabled = n === 0;
+        $("btn-all").textContent =
+          n === total ? "Deseleccionar todo" : "Seleccionar todo";
+      }
+
+      function toggleTodo() {
+        const todas = seleccionados.every(Boolean);
+        seleccionados = seleccionados.map(() => !todas);
+        document
+          .querySelectorAll("#popup-grid .thumb-card")
+          .forEach((card, i) => {
+            card.classList.toggle("sel", seleccionados[i]);
+            card.setAttribute("aria-checked", String(seleccionados[i]));
+          });
+        actualizarContador();
+      }
+
+      function cerrarPopup() {
+        cerrarLightbox();
+        hd("popup-galeria");
+        urlsPreview.forEach((u) => URL.revokeObjectURL(u));
+        urlsPreview = [];
+        resetearTodo();
+      }
+
+      async function guardarSeleccion() {
+        const elegidos = archivosSeleccionados.filter(
+          (_, i) => seleccionados[i],
+        );
+        if (!elegidos.length) return;
+        if (tieneWebShare() && navigator.canShare({ files: elegidos })) {
+          try {
+            await navigator.share({
+              files: elegidos,
+              title: "Fotos de la boda",
+            });
+            cerrarPopup();
+            return;
+          } catch (e) {
+            if (e.name === "AbortError") return;
+          }
+        }
+        if (esIOS()) {
+          const primerIdx = seleccionados.indexOf(true);
+          if (primerIdx !== -1) abrirLightbox(primerIdx);
+          return;
+        }
+        for (const file of elegidos) {
+          const url = URL.createObjectURL(file);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = file.name;
+          a.style.display = "none";
+          document.body.appendChild(a);
+          a.click();
+          await new Promise((r) => setTimeout(r, 400));
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+        cerrarPopup();
+      }
+
+      let _lbKeyListening = false;
+      function abrirLightbox(i) {
+        mostrarEnLightbox(i);
+        sh("lightbox");
+        if (!_lbKeyListening) {
+          document.addEventListener("keydown", _lbKeyHandler);
+          _lbKeyListening = true;
+        }
+        if (esIOS() && !tieneWebShare()) {
+          const hint = $("lb-hint");
+          hint.classList.add("visible");
+          setTimeout(() => hint.classList.remove("visible"), 3000);
+        }
+      }
+
+      function mostrarEnLightbox(i) {
+        const file = archivosSeleccionados[i],
+          url = urlsPreview[i];
+        const esVideo = file.type.startsWith("video/");
+        const img = $("lb-img"),
+          vid = $("lb-vid");
+        if (esVideo) {
+          img.style.display = "none";
+          vid.style.display = "";
+          vid.src = url;
+          vid.load();
+        } else {
+          vid.pause();
+          vid.style.display = "none";
+          img.style.display = "";
+          img.src = url;
+        }
+        $("lb-info").textContent =
+          i + 1 + " / " + archivosSeleccionados.length + "  ·  " + file.name;
+        lbIndex = i;
+      }
+
+      function lbNav(dir) {
+        const n = archivosSeleccionados.length;
+        mostrarEnLightbox((lbIndex + dir + n) % n);
+      }
+      function cerrarLightbox() {
+        const lb = $("lightbox");
+        if (lb.classList.contains("hidden")) return;
+        $("lb-vid").pause();
+        $("lb-vid").src = "";
+        hd("lightbox");
+        if (_lbKeyListening) {
+          document.removeEventListener("keydown", _lbKeyHandler);
+          _lbKeyListening = false;
+        }
+      }
+
+      function _lbKeyHandler(e) {
+        if (e.key === "Escape") cerrarLightbox();
+        if (e.key === "ArrowRight") lbNav(1);
+        if (e.key === "ArrowLeft") lbNav(-1);
+      }
+      $("lightbox").addEventListener("click", function (e) {
+        if (e.target === this) cerrarLightbox();
+      });
+
+      (function initSwipe() {
+        let sx = 0,
+          sy = 0;
+        $("lightbox").addEventListener(
+          "touchstart",
+          (e) => {
+            sx = e.changedTouches.clientX;
+            sy = e.changedTouches.clientY;
+          },
+          { passive: true },
+        );
+        $("lightbox").addEventListener(
+          "touchend",
+          (e) => {
+            const dx = e.changedTouches.clientX - sx;
+            const dy = e.changedTouches.clientY - sy;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50)
+              lbNav(dx < 0 ? 1 : -1);
+          },
+          { passive: true },
+        );
+      })();
+    </script>
+  </body>
+</html>
