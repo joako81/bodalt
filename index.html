@@ -2,7 +2,10 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <meta
       name="description"
       content="Sube las fotos de la boda de Lidia y Tomás."
@@ -36,11 +39,12 @@
 
       body,
       html {
-        height: 100dvh;
+        /* Usamos min-height para que en móvil no se corte si hay mucho texto */
+        min-height: 100dvh;
         width: 100%;
         font-family: var(--fuente-texto);
         color: var(--color-texto-principal);
-        overflow: hidden;
+        overflow-x: hidden;
       }
 
       #background-container {
@@ -50,8 +54,9 @@
         width: 100%;
         height: 100%;
         background-size: cover;
-        /* FIX: Desplazamos la foto un 15% desde arriba para no cortar las caras */
-        background-position: 70%;
+        /* Por defecto en escritorio centrado un poco más abajo */
+        background-position: center 70%;
+        background-repeat: no-repeat;
         z-index: -2;
       }
 
@@ -67,13 +72,12 @@
       main {
         display: flex;
         flex-direction: column;
-        /* FIX: Flex-start alinea todo al inicio superior */
         justify-content: flex-start;
         align-items: center;
         width: 100%;
-        height: 100%;
-        padding: 4vh 4vw; /* Padding superior ajustado */
-        overflow-y: auto; /* Permite scroll si la pantalla es enana */
+        min-height: 100dvh;
+        padding: 4vh 5vw 10vh 5vw;
+        overflow-y: auto;
       }
 
       .elemento {
@@ -82,7 +86,6 @@
         width: 100%;
         max-width: 90vw;
         order: var(--el-orden, 0);
-        /* FIX: Variables dinámicas para empujar elementos de forma responsiva */
         margin-top: var(--el-margen-arriba, 0);
         margin-bottom: var(--el-margen-abajo, 1vh);
         transition: margin 0.3s ease;
@@ -109,17 +112,18 @@
       }
 
       .fecha {
-        font-size: clamp(1rem, 3vw, 1.3rem);
+        font-size: clamp(1rem, 3.5vw, 1.3rem);
         letter-spacing: 2px;
         text-transform: uppercase;
         color: var(--color-dorado);
         text-shadow: 1px 1px 4px rgba(30, 10, 15, 0.8);
         font-weight: bold;
       }
+
       .mensaje {
-        font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-        line-height: 1.4;
-        text-shadow: 1px 1px 4px rgba(30, 10, 15, 0.8);
+        font-size: clamp(0.95rem, 3vw, 1.2rem);
+        line-height: 1.5;
+        text-shadow: 1px 1px 4px rgba(30, 10, 15, 0.9);
         margin: 0 auto;
         max-width: 650px;
       }
@@ -130,7 +134,7 @@
         color: var(--color-texto-boton);
         border: none;
         padding: clamp(0.8rem, 2vh, 1.2rem) clamp(1.5rem, 5vw, 3rem);
-        font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+        font-size: clamp(1.1rem, 4vw, 1.5rem);
         width: 100%;
         max-width: 350px;
         border-radius: 50px;
@@ -157,12 +161,12 @@
         backdrop-filter: blur(4px);
       }
       .texto-countdown {
-        font-size: clamp(0.8rem, 2vw, 1rem);
+        font-size: clamp(0.8rem, 2.5vw, 1rem);
         font-style: italic;
       }
       #countdown-container {
         display: flex;
-        gap: clamp(0.5rem, 2vw, 1.5rem);
+        gap: clamp(0.5rem, 3vw, 1.5rem);
         flex-wrap: nowrap;
         justify-content: center;
       }
@@ -173,23 +177,16 @@
         align-items: center;
       }
       .time-number {
-        font-size: clamp(1.5rem, 5vw, 2.5rem);
+        font-size: clamp(1.5rem, 6vw, 2.5rem);
         font-weight: bold;
         font-family: var(--fuente-titulos);
         text-shadow: 2px 2px 6px rgba(30, 10, 15, 0.8);
       }
       .time-label {
-        font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+        font-size: clamp(0.6rem, 2vw, 0.8rem);
         text-transform: uppercase;
         letter-spacing: 1px;
         color: var(--color-acento);
-      }
-
-      @media (min-width: 768px) {
-        #ui-nombres {
-          flex-direction: row;
-          gap: 1.5rem;
-        }
       }
 
       /* ── Modal ── */
@@ -251,6 +248,46 @@
 
       .hidden {
         display: none !important;
+      }
+
+      /* =========================================================
+         🚀 RESPONSIVE MOBILE TWEAKS
+         ========================================================= */
+      @media (min-width: 768px) {
+        #ui-nombres {
+          flex-direction: row;
+          gap: 1.5rem;
+        }
+      }
+
+      @media (max-width: 767px) {
+        #background-container {
+          /* Subimos la imagen para que las caras cuadren en el centro-arriba en móvil */
+          background-position: center 15%;
+        }
+
+        main {
+          /* Reducimos el padding superior para que los nombres estén más arriba */
+          padding-top: 4vh;
+          /* Dejamos un margen abajo para que el botón no toque el borde del teléfono */
+          padding-bottom: 6vh;
+        }
+
+        dialog {
+          width: 100%;
+          height: 100dvh;
+          max-height: 100dvh;
+          border-radius: 0;
+        }
+
+        iframe {
+          border-radius: 0;
+        }
+
+        .btn-cerrar {
+          margin-top: 5px;
+          margin-left: 5px;
+        }
       }
     </style>
   </head>
@@ -347,7 +384,6 @@
 
         overlayColor: "rgba(77, 21, 26, 0.40)",
 
-        /* FIX: El margenAbajo 'auto' en los nombres empuja los demás elementos hacia abajo de forma natural */
         posicionPC: {
           nombres: { orden: 1, margenArriba: "2vh", margenAbajo: "auto" },
           fecha: { orden: 2, margenArriba: "0", margenAbajo: "3vh" },
@@ -356,11 +392,14 @@
           countdown: { orden: 5, margenArriba: "0", margenAbajo: "0" },
         },
 
+        /* LA MAGIA DEL MÓVIL:
+           Al ponerle margenArriba: "auto" a la fecha, empujamos todo ese bloque hacia abajo, 
+           separándolo de los nombres y dejando el centro libre para vuestras caras. */
         posicionMovil: {
-          nombres: { orden: 1, margenArriba: "4vh", margenAbajo: "auto" },
-          fecha: { orden: 2, margenArriba: "0", margenAbajo: "1.5vh" },
+          nombres: { orden: 1, margenArriba: "2vh", margenAbajo: "0" },
+          fecha: { orden: 2, margenArriba: "auto", margenAbajo: "1.5vh" },
           mensaje: { orden: 3, margenArriba: "0", margenAbajo: "3vh" },
-          boton: { orden: 4, margenArriba: "0", margenAbajo: "5vh" },
+          boton: { orden: 4, margenArriba: "0", margenAbajo: "2vh" },
           countdown: { orden: 5, margenArriba: "0", margenAbajo: "0" },
         },
       };
@@ -423,7 +462,6 @@
         document.getElementById("iframe-google").src = CONFIG.urlGoogleScript;
       }
 
-      /* FIX: Inyección de márgenes dinámicos incluyendo el margen superior */
       function aplicarDistribucion(bloquePosiciones) {
         Object.entries(MAPA_IDS).forEach(([clave, id]) => {
           const el = document.getElementById(id);
